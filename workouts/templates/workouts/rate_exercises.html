@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rate Exercises - {{ workout.name }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+        .info-box {
+            background-color: #e3f2fd;
+            padding: 15px;
+            border-left: 4px solid #2196F3;
+            margin: 20px 0;
+        }
+        .exercise-rating {
+            background-color: #f9f9f9;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border-left: 4px solid #4CAF50;
+        }
+        .exercise-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .rating-scale {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .rating-option {
+            flex: 1;
+            text-align: center;
+        }
+        .rating-option input[type="radio"] {
+            display: none;
+        }
+        .rating-option label {
+            display: block;
+            padding: 12px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+        .rating-option input[type="radio"]:checked + label {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .rating-option label:hover {
+            background-color: #d0d0d0;
+        }
+        .rating-option input[type="radio"]:checked + label:hover {
+            background-color: #45a049;
+        }
+        .rating-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+            font-size: 12px;
+            color: #666;
+        }
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            font-weight: bold;
+            margin: 10px 5px;
+        }
+        .btn-primary {
+            background-color: #4CAF50;
+            color: white;
+            width: 100%;
+        }
+        .btn-primary:hover {
+            background-color: #45a049;
+        }
+        .btn-secondary {
+            background-color: #757575;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Rate Your Exercises</h1>
+
+        <div class="info-box">
+            <p><strong>Help us improve difficulty ratings!</strong></p>
+            <p>Rate how difficult each exercise felt on a scale of 1-10. Your ratings help other users understand exercise difficulty.</p>
+        </div>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            {% for workout_exercise in workout.workout_exercises.all %}
+                <div class="exercise-rating">
+                    <div class="exercise-name">
+                        {{ workout_exercise.exercise.name }}
+                        <span style="color: #4CAF50; font-size: 14px; font-weight: normal;">
+                            (Current: {{ workout_exercise.exercise.difficulty_score|floatformat:1 }}/10)
+                        </span>
+                    </div>
+                    <p style="color: #666; font-size: 14px;">
+                        {{ workout_exercise.exercise.get_primary_muscle_display }}
+                    </p>
+
+                    <div class="rating-scale">
+                        {% for i in "1234567890" %}
+                            <div class="rating-option">
+                                <input type="radio"
+                                       id="rating_{{ workout_exercise.id }}_{{ forloop.counter }}"
+                                       name="rating_{{ workout_exercise.id }}"
+                                       value="{{ forloop.counter }}"
+                                       {% if forloop.counter == 5 %}checked{% endif %}>
+                                <label for="rating_{{ workout_exercise.id }}_{{ forloop.counter }}">
+                                    {{ forloop.counter }}
+                                </label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+
+            <button type="submit" class="btn btn-primary">Submit Ratings</button>
+            <a href="{% url 'workouts:workout-detail' workout.id %}" class="btn btn-secondary">Skip</a>
+        </form>
+    </div>
+</body>
+</html>

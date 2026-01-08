@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitness Tracker - Home</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        p {
+            color: #666;
+            font-size: 18px;
+            margin: 20px 0;
+        }
+        .button-group {
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .btn-primary {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #45a049;
+        }
+        .btn-secondary {
+            background-color: #2196F3;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: #0b7dda;
+        }
+        .messages {
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to Fitness Tracker!</h1>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="messages success">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        {% if user.is_authenticated %}
+            <p>Hello, {{ user.username }}!</p>
+            <div class="button-group">
+                <a href="{% url 'accounts:dashboard' %}" class="btn btn-primary">Go to Dashboard</a>
+                <a href="{% url 'accounts:logout' %}" class="btn btn-secondary">Logout</a>
+            </div>
+        {% else %}
+            <p>Track your workouts, join fitness sessions, and achieve your goals!</p>
+            <div class="button-group">
+                <a href="{% url 'accounts:login' %}" class="btn btn-primary">Login</a>
+                <a href="{% url 'accounts:register' %}" class="btn btn-secondary">Register</a>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
+

@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Booking Details</h2>
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Booking Information</h5>
+
+            <p><strong>Client:</strong> {{ booking.client.username }}</p>
+            <p><strong>Trainer:</strong> {{ booking.trainer.username }}</p>
+            <p><strong>Date:</strong> {{ booking.requested_date }}</p>
+            <p><strong>Time:</strong> {{ booking.requested_time }}</p>
+            <p><strong>Duration:</strong> {{ booking.duration_minutes }} minutes</p>
+
+            <p><strong>Status:</strong>
+                <span class="badge
+                    {% if booking.status == 'confirmed' %}bg-success
+                    {% elif booking.status == 'pending' %}bg-warning
+                    {% elif booking.status == 'rejected' %}bg-danger
+                    {% elif booking.status == 'cancelled' %}bg-secondary
+                    {% else %}bg-info{% endif %}">
+                    {{ booking.get_status_display }}
+                </span>
+            </p>
+
+            {% if booking.notes %}
+            <p><strong>Notes:</strong></p>
+            <p>{{ booking.notes }}</p>
+            {% endif %}
+
+            <hr>
+
+            <p><strong>Created:</strong> {{ booking.created_at }}</p>
+            {% if booking.processed_at %}
+            <p><strong>Processed:</strong> {{ booking.processed_at }}</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="mt-3">
+        <a href="{% url 'trainer_bookings:booking-list' %}" class="btn btn-secondary">Back to Bookings</a>
+        {% if booking.status == 'pending' and not is_trainer %}
+        <a href="{% url 'trainer_bookings:cancel-booking' booking.id %}" class="btn btn-danger">Cancel Booking</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - {{ profile.user.username }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+        .role-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            color: white;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .role-user {
+            background-color: #2196F3;
+        }
+        .role-trainer {
+            background-color: #FF9800;
+        }
+        .welcome-message {
+            background-color: #e8f5e9;
+            padding: 15px;
+            border-left: 4px solid #4CAF50;
+            margin: 20px 0;
+        }
+        .features-section {
+            margin: 30px 0;
+        }
+        .features-list {
+            list-style: none;
+            padding: 0;
+        }
+        .features-list li {
+            padding: 10px;
+            margin: 5px 0;
+            background-color: #f9f9f9;
+            border-left: 3px solid #4CAF50;
+            padding-left: 15px;
+        }
+        .permissions-section {
+            margin: 30px 0;
+            padding: 20px;
+            background-color: #fff3cd;
+            border-radius: 5px;
+        }
+        .permissions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .permission-item {
+            background-color: white;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        .permission-check {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        .messages {
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .button-group {
+            margin-top: 30px;
+            display: flex;
+            gap: 10px;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        .btn-primary {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .btn-secondary {
+            background-color: #2196F3;
+            color: white;
+        }
+        .btn:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>
+            Dashboard
+            <span class="role-badge role-{{ profile.role }}">
+                {{ dashboard_data.role }}
+            </span>
+        </h1>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="messages success">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="welcome-message">
+            <h2>{{ dashboard_data.message }}</h2>
+            <p><strong>Username:</strong> {{ dashboard_data.username }}</p>
+            <p><strong>Role:</strong> {{ dashboard_data.role }}</p>
+        </div>
+
+        <div class="features-section">
+            <h3>Your Available Features</h3>
+            <ul class="features-list">
+                {% for feature in dashboard_data.features %}
+                    <li>{{ feature }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        {% if dashboard_data.specialities %}
+            <div class="features-section">
+                <h3>Your Specialities</h3>
+                <ul class="features-list">
+                    {% for spec in dashboard_data.specialities %}
+                        <li>{{ spec }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+        <div class="permissions-section">
+            <h3>Your Permissions</h3>
+            <div class="permissions-grid">
+                {% for permission in permissions %}
+                    <div class="permission-item">
+                        <span class="permission-check">✓</span> {{ permission }}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="button-group">
+            <a href="{% url 'workouts:workout-list' %}" class="btn btn-primary">My Workouts</a>
+            <a href="{% url 'trainer_bookings:booking-list' %}" class="btn btn-primary">Trainer Bookings</a>
+            <a href="{% url 'accounts:select-role' %}" class="btn btn-secondary">Change Role</a>
+            <a href="{% url 'accounts:accounts-home' %}" class="btn btn-secondary">Home</a>
+        </div>
+    </div>
+</body>
+</html>

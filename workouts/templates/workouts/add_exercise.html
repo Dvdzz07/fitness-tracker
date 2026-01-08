@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Exercise - {{ workout.name }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+        .search-box {
+            margin: 20px 0;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .muscle-group {
+            margin: 25px 0;
+        }
+        .muscle-group h3 {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .exercise-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 10px;
+        }
+        .exercise-item {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            border: 2px solid #ddd;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .exercise-item:hover {
+            border-color: #4CAF50;
+            background-color: #e8f5e9;
+        }
+        .exercise-name {
+            font-weight: bold;
+            color: #333;
+        }
+        .exercise-type {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        .btn-secondary {
+            background-color: #2196F3;
+            color: white;
+        }
+        .messages {
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Add Exercise to {{ workout.name }}</h1>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="messages success">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="search-box">
+            <form method="GET" style="margin: 0;">
+                <input type="text" name="search" placeholder="Search exercises..." value="{{ search_query }}" style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 5px; font-size: 16px;">
+                <button type="submit" style="display: none;"></button>
+            </form>
+        </div>
+
+        <div style="text-align: center; margin: 20px 0;">
+            <a href="{% url 'workouts:recommend-exercises' workout.id %}" class="btn btn-primary" style="background-color: #4CAF50; color: white; padding: 15px 30px; border-radius: 5px; text-decoration: none; display: inline-block; font-weight: bold;">
+                Recommend Exercises For Me
+            </a>
+        </div>
+
+        <div id="exercise-container">
+            {% for muscle, exercises in exercises_by_muscle.items %}
+                <div class="muscle-group">
+                    <h3>{{ muscle }}</h3>
+                    <div class="exercise-list">
+                        {% for exercise in exercises %}
+                            <form method="POST" style="margin: 0;">
+                                {% csrf_token %}
+                                <input type="hidden" name="exercise_id" value="{{ exercise.id }}">
+                                <div class="exercise-item" onclick="this.closest('form').submit()">
+                                    <div class="exercise-name">{{ exercise.name }}</div>
+                                    <div class="exercise-type">{{ exercise.get_exercise_type_display }}</div>
+                                    <div class="exercise-type" style="color: #4CAF50; font-weight: bold; margin-top: 5px;">
+                                        Difficulty: {{ exercise.difficulty_score|floatformat:1 }}/10
+                                    </div>
+                                </div>
+                            </form>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <a href="{% url 'workouts:log-sets' workout.id %}" class="btn btn-secondary">Done Adding Exercises</a>
+    </div>
+</body>
+</html>

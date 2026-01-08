@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Request Trainer Booking</h2>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label for="trainer" class="form-label">Select Trainer</label>
+            <select name="trainer" id="trainer" class="form-select" required>
+                <option value="">Choose a trainer...</option>
+                {% for trainer in trainers %}
+                <option value="{{ trainer.id }}">{{ trainer.username }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="requested_date" class="form-label">Preferred Date</label>
+            <input type="date" name="requested_date" id="requested_date" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="requested_time" class="form-label">Preferred Time</label>
+            <input type="time" name="requested_time" id="requested_time" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="duration" class="form-label">Duration (minutes)</label>
+            <select name="duration" id="duration" class="form-select">
+                <option value="30">30 minutes</option>
+                <option value="60" selected>60 minutes</option>
+                <option value="90">90 minutes</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="notes" class="form-label">Notes (optional)</label>
+            <textarea name="notes" id="notes" class="form-control" rows="3"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit Booking Request</button>
+        <a href="{% url 'trainer_bookings:booking-list' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+
+    <div class="alert alert-info mt-3">
+        <strong>Priority System:</strong> Bookings are processed in order of earliest requested time.
+        Earlier dates and times have higher priority.
+    </div>
+</div>
+{% endblock %}

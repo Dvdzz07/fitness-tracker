@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>My Bookings</h2>
+
+    <a href="{% url 'trainer_bookings:create-booking' %}" class="btn btn-primary mb-3">Request New Booking</a>
+
+    <!-- Client Bookings -->
+    <h3>My Booking Requests</h3>
+    {% if client_bookings %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Trainer</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Duration</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for booking in client_bookings %}
+                <tr>
+                    <td>{{ booking.trainer.username }}</td>
+                    <td>{{ booking.requested_date }}</td>
+                    <td>{{ booking.requested_time }}</td>
+                    <td>{{ booking.duration_minutes }} min</td>
+                    <td>
+                        <span class="badge
+                            {% if booking.status == 'confirmed' %}bg-success
+                            {% elif booking.status == 'pending' %}bg-warning
+                            {% elif booking.status == 'rejected' %}bg-danger
+                            {% elif booking.status == 'cancelled' %}bg-secondary
+                            {% else %}bg-info{% endif %}">
+                            {{ booking.get_status_display }}
+                        </span>
+                    </td>
+                    <td>
+                        <a href="{% url 'trainer_bookings:booking-detail' booking.id %}" class="btn btn-sm btn-info">View</a>
+                        {% if booking.status == 'pending' %}
+                        <a href="{% url 'trainer_bookings:cancel-booking' booking.id %}" class="btn btn-sm btn-danger">Cancel</a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No booking requests yet.</p>
+    {% endif %}
+
+    <!-- Trainer Bookings (if user is trainer) -->
+    {% if is_trainer %}
+    <hr>
+    <h3>Bookings for My Training Sessions</h3>
+    <div class="mb-3">
+        <a href="{% url 'trainer_bookings:process-bookings' user.id %}" class="btn btn-success">Process Pending Bookings</a>
+        <a href="{% url 'trainer_bookings:view-queue' user.id %}" class="btn btn-info">View Priority Queue</a>
+    </div>
+
+    {% if trainer_bookings %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Client</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Duration</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for booking in trainer_bookings %}
+                <tr>
+                    <td>{{ booking.client.username }}</td>
+                    <td>{{ booking.requested_date }}</td>
+                    <td>{{ booking.requested_time }}</td>
+                    <td>{{ booking.duration_minutes }} min</td>
+                    <td>
+                        <span class="badge
+                            {% if booking.status == 'confirmed' %}bg-success
+                            {% elif booking.status == 'pending' %}bg-warning
+                            {% elif booking.status == 'rejected' %}bg-danger
+                            {% elif booking.status == 'cancelled' %}bg-secondary
+                            {% else %}bg-info{% endif %}">
+                            {{ booking.get_status_display }}
+                        </span>
+                    </td>
+                    <td>
+                        <a href="{% url 'trainer_bookings:booking-detail' booking.id %}" class="btn btn-sm btn-info">View</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No bookings for your training sessions yet.</p>
+    {% endif %}
+    {% endif %}
+</div>
+{% endblock %}

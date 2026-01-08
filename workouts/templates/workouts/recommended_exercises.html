@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recommend Exercises - {{ workout.name }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+        .preference-form {
+            margin: 30px 0;
+        }
+        .form-group {
+            margin: 20px 0;
+        }
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .number-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+        .number-input:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            font-weight: bold;
+            margin: 10px 5px;
+        }
+        .btn-primary {
+            background-color: #4CAF50;
+            color: white;
+            width: 100%;
+        }
+        .btn-primary:hover {
+            background-color: #45a049;
+        }
+        .btn-secondary {
+            background-color: #757575;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: #616161;
+        }
+        .exercise-list {
+            margin: 30px 0;
+        }
+        .exercise-item {
+            background-color: #f9f9f9;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .exercise-item:hover {
+            border-color: #4CAF50;
+            background-color: #e8f5e9;
+            transform: translateX(5px);
+        }
+        .exercise-name {
+            font-weight: bold;
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        .exercise-details {
+            font-size: 14px;
+            color: #666;
+            margin: 5px 0;
+        }
+        .difficulty-badge {
+            display: inline-block;
+            background-color: #4CAF50;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Recommend Exercises</h1>
+
+        {% if recommended_exercises %}
+            <h2>Top 5 Recommended Exercises</h2>
+            <div class="exercise-list">
+                {% for exercise in recommended_exercises %}
+                    <form method="POST" action="{% url 'workouts:add-exercise' workout.id %}" style="margin: 0;">
+                        {% csrf_token %}
+                        <input type="hidden" name="exercise_id" value="{{ exercise.id }}">
+                        <div class="exercise-item" onclick="this.closest('form').submit()">
+                            <div class="exercise-name">{{ exercise.name }}</div>
+                            <div class="exercise-details">
+                                <strong>Type:</strong> {{ exercise.get_exercise_type_display }}
+                            </div>
+                            <div class="exercise-details">
+                                <strong>Primary Muscle:</strong> {{ exercise.get_primary_muscle_display }}
+                                {% if exercise.secondary_muscles %}
+                                    | <strong>Secondary:</strong> {{ exercise.secondary_muscles }}
+                                {% endif %}
+                            </div>
+                            <span class="difficulty-badge">Difficulty: {{ exercise.difficulty_score|floatformat:1 }}/10</span>
+                        </div>
+                    </form>
+                {% endfor %}
+            </div>
+            <div style="text-align: center; margin-top: 30px;">
+                <a href="{% url 'workouts:recommend-exercises' workout.id %}" class="btn btn-secondary">New Recommendation</a>
+                <a href="{% url 'workouts:add-exercise' workout.id %}" class="btn btn-secondary">Back to All Exercises</a>
+            </div>
+        {% else %}
+            <p>Rate each category out of 10 based on what you want to focus on:</p>
+
+            <form method="POST" class="preference-form">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="strength">Strength Focus (0-10)</label>
+                    <input type="number" min="0" max="10" value="5" class="number-input" id="strength" name="strength" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="cardio">Cardio Intensity (0-10)</label>
+                    <input type="number" min="0" max="10" value="5" class="number-input" id="cardio" name="cardio" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="flexibility">Flexibility (0-10)</label>
+                    <input type="number" min="0" max="10" value="5" class="number-input" id="flexibility" name="flexibility" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="upper_body">Upper Body Involvement (0-10)</label>
+                    <input type="number" min="0" max="10" value="5" class="number-input" id="upper_body" name="upper_body" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="lower_body">Lower Body Involvement (0-10)</label>
+                    <input type="number" min="0" max="10" value="5" class="number-input" id="lower_body" name="lower_body" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="core">Core Involvement (0-10)</label>
+                    <input type="number" min="0" max="10" value="5" class="number-input" id="core" name="core" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="preferred_difficulty">Preferred Difficulty (0-10)</label>
+                    <input type="number" min="0" max="10" value="5" class="number-input" id="preferred_difficulty" name="preferred_difficulty" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Get Recommendations</button>
+            </form>
+
+            <div style="text-align: center; margin-top: 20px;">
+                <a href="{% url 'workouts:add-exercise' workout.id %}" class="btn btn-secondary">Back to All Exercises</a>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
