@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python test_salt.py:*)",
+      "Bash(python manage.py makemigrations:*)",
+      "Bash(python manage.py startapp:*)",
+      "Bash(if not exist workouts mkdir workouts)",
+      "Bash(python manage.py set_initial_ratings:*)",
+      "Bash(source:*)",
+      "Bash(python manage.py migrate:*)",
+      "Bash(python manage.py populate_exercise_features:*)",
+      "Bash(python manage.py populate_exercises:*)",
+      "Bash(python manage.py runserver:*)",
+      "Bash(venvScriptsactivate)",
+      "Bash(if not exist trainer_bookingstemplatestrainer_bookings mkdir trainer_bookingstemplatestrainer_bookings)",
+      "Bash(dir accountstemplates:*)",
+      "Bash(git init:*)",
+      "Bash(git config:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git remote add:*)",
+      "Bash(git branch:*)",
+      "Bash(git push:*)",
+      "Bash(git remote:*)",
+      "Bash(git rm:*)"
+    ]
+  }
+}
